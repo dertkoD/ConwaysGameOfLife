@@ -235,21 +235,55 @@ namespace ConwaysGameOfLifeWinForms
 
         private void CreateCircular()
         {
-            var r = size / 2 + 1;
+            var r = size / 2 ;
             var x0 = size / 2 ;
             var y0 = size / 2 ;
             var x = -r;
 
-            while (x < r)
+            if (size % 2 == 0)
             {
-                var y = (int)Math.Floor(Math.Sqrt(r * r - x * x));
+                while (x >= r)
+                {
+                    var y = (int)Math.Floor(Math.Sqrt(r * r - x * x));
+                    var trueY = x0 + x;
+                    var a = y + y0;
 
-                PaintWall(x0 + x, y0 + y);
-                y = -y;
-                PaintWall(x0 + x, y0 + y);
+                    for (var i = size; i >= y + y0; i--)
+                    {
+                        PaintWall(x0 + x, i);
+                    }
 
-                x++;
+                    y = -y;
+                    for (int i = 0; i <= y + y0; i++)
+                    {
+                        PaintWall(x0 + x, i);
+                    }
+
+                    x++;
+                }
             }
+            else
+            {
+                while (x <= r)
+                {
+                    var y = (int)Math.Floor(Math.Sqrt(r * r - x * x));
+                    var trueY = x0 + x;
+                    var a = y + y0;
+
+                    for (var i = size; i >= y + y0; i--)
+                    {
+                        PaintWall(x0 + x, i);
+                    }
+
+                    y = -y;
+                    for (int i = 0; i <= y + y0; i++)
+                    {
+                        PaintWall(x0 + x, i);
+                    }
+
+                    x++;
+                }
+            }            
         }
 
         private void CreateCross()
@@ -384,7 +418,6 @@ namespace ConwaysGameOfLifeWinForms
         private void SetNextGeneration()
         {
             bool CellStatusNext;
-            // Получаем состояние всех ячеек поля на следующий ход и записываем в слой игрового поля
             for (int i = 0; i < size; i++)
             {
                 for (int j = 0; j < size; j++)
@@ -496,8 +529,7 @@ namespace ConwaysGameOfLifeWinForms
             {
                 for (var j = 0; j < size; j++)
                 {
-                    var point = new Point(i, j);
-                    var cell = ListGameField.Where(x => x.Point == point).FirstOrDefault();
+                    var cell = ListGameField.Where(x => x.Point == new Point(i, j)).FirstOrDefault();
                     PaintCell(cell);
                     cell.IsALiveCurrent = cell.IsALiveNext;
                 }
@@ -507,13 +539,11 @@ namespace ConwaysGameOfLifeWinForms
 
         private void PaintCell(GameCell cell)
         {
-            // Получаем координаты сторон ячейки (в пикселях)
             int left = cell.Point.X * blockSize;
             int top = cell.Point.Y * blockSize;
 
             Rectangle rec = new Rectangle(left, top, blockSize - 1, blockSize - 1);
 
-            // В зависимости от состояния ячейки закрашиваем клетку
             if (cell.IsWall)
                 grafField.FillRectangle(Brushes.Black, rec);
             else
@@ -561,7 +591,6 @@ namespace ConwaysGameOfLifeWinForms
         {
             Run();
             GameTimer.Stop();
-            label7.Text = $"{GameTimer.Interval}";
         }
     }
 

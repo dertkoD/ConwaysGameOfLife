@@ -46,7 +46,6 @@ namespace ConwaysGameOfLifeWinForms
             this.GameTimer = new System.Windows.Forms.Timer(this.components);
             this.pictureBox = new System.Windows.Forms.PictureBox();
             this.button1 = new System.Windows.Forms.Button();
-            this.label7 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -223,20 +222,11 @@ namespace ConwaysGameOfLifeWinForms
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(861, 34);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(0, 13);
-            this.label7.TabIndex = 15;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1291, 598);
-            this.Controls.Add(this.label7);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.pictureBox);
             this.Controls.Add(this.StartGameButton);
@@ -279,7 +269,6 @@ namespace ConwaysGameOfLifeWinForms
         private System.Windows.Forms.Timer GameTimer;
         private System.Windows.Forms.PictureBox pictureBox;
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Label label7;
     }
 }
 
