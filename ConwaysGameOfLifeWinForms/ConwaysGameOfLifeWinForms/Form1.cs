@@ -44,6 +44,7 @@ namespace ConwaysGameOfLifeWinForms
 
                 PreparingForTheGame();
                 GenerationOfLivingCells();
+                GameTimer.Start();
             }
             catch (Exception eee)
             {
@@ -168,8 +169,6 @@ namespace ConwaysGameOfLifeWinForms
                 CreateCross();
             else if (shape == "Circular")
                 CreateCircular();
-            else if (shape == "Ring")
-                CreateRing();
             
             pictureBox.Image = imageGameField;
         }
@@ -207,12 +206,6 @@ namespace ConwaysGameOfLifeWinForms
                 grafField.FillEllipse(Brushes.Green, rec);
                 ListGameField.Where(c => c.Point == new Point(x, y)).FirstOrDefault().IsALiveCurrent = true;
             }
-        }
-        private void CreateRing()
-        {
-            CreateCircular();
-
-
         }
 
         private void CreateCircular()
@@ -255,27 +248,46 @@ namespace ConwaysGameOfLifeWinForms
             }
             else
             {
-                x0--;
-                r--;
-                x++;
-                //y0--;
-                while (x <= r)
-                {
-                    var y = (int)Math.Floor(Math.Sqrt(r * r - x * x));
+                //x0--;
+                //r--;
+                //x++;
+                ////y0--;
+                //while (x <= r)
+                //{
+                //    var y = (int)Math.Floor(Math.Sqrt(r * r - x * x));
 
-                    for (var i = size / 2; i >= y + y0; i--)
-                    {
-                        PaintWall(x0 + x, i);
-                    }
+                //    for (var i = size; i >= y + y0; i--)
+                //    {
+                //        PaintWall(x0 + x, i);
+                //    }
 
-                    y = -y;
-                    for (int i = 0; i <= y + y0; i++)
-                    {
-                        PaintWall(x0 + x, i);
-                    }
+                //    y = -y;
+                //    for (int i = 0; i <= y + y0; i++)
+                //    {
+                //        PaintWall(x0 + x, i);
+                //    }
 
-                    x++;
-                }
+                //    x++;
+                //}
+                //r--;
+                //double r_in = r - 0.4;
+                //double r_out = r + 0.4;
+
+                //for (double y = r; y >= -r; --y)
+                //{
+                //    for (double xTrue = -r; xTrue < r_out; xTrue += 0.5)
+                //    {
+                //        double value = xTrue * xTrue + y * y;
+                //        if (value >= r_in * r_in && value <= r_out * r_out)
+                //        {
+                //            PaintWall((int)Math.Floor(xTrue), (int)Math.Floor(y));
+                //        }
+                //        //else if (fill && value < r_in * r_in && value < r_out * r_out)
+                //        //{
+                //        //    Console.Write(".");
+                //        //}
+                //    }
+                //}
             }            
         }
 

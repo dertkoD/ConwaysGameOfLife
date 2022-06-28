@@ -98,8 +98,7 @@ namespace ConwaysGameOfLifeWinForms
             "Rectengular",
             "Diamond",
             "Cross",
-            "Circular",
-            "Ring"});
+            "Circular"});
             this.cbShape.Location = new System.Drawing.Point(85, 34);
             this.cbShape.Name = "cbShape";
             this.cbShape.Size = new System.Drawing.Size(121, 21);
