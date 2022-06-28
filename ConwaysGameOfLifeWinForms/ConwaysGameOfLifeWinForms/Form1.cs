@@ -20,12 +20,12 @@ namespace ConwaysGameOfLifeWinForms
         int size;
         int coefficient;
         string shape;
-        double? speed;
         int polisy;
         Random propability;
         bool active = false;
         bool spontaneous = false;
-        int countLivingCells = 0;
+        int countLivingCellsCurrent = 0;
+        int countLivingCellsNext = 0;
 
         public Form1()
         {
@@ -39,7 +39,6 @@ namespace ConwaysGameOfLifeWinForms
                 SelectItemSize(cbSize.SelectedItem.ToString());
                 SelectItemSeed(cbSeed.SelectedItem.ToString());
                 SelectItemShape(cbShape.SelectedItem.ToString());
-                SelectItemSpeed(cbSpeed.SelectedItem.ToString());
                 SelectItemPolicy(cbPolicy.SelectedItem.ToString());
                 SelectItemWalls(cbWalls.SelectedItem.ToString());
 
@@ -72,22 +71,6 @@ namespace ConwaysGameOfLifeWinForms
                 propability = new Random();
                 spontaneous = true;
             }
-        }
-
-        private void SelectItemSpeed(string currentItem)
-        {
-            if (currentItem.Contains("Stop"))
-                speed = null;
-            else if (currentItem == "Very Slow")
-                speed = 2;
-            else if (currentItem == "Slow")
-                speed = 1;
-            else if (currentItem.Contains("Normal"))
-                speed = 0.5;
-            else if (currentItem == "Fast")
-                speed = 0.2;
-            else if (currentItem == "Very Fast")
-                speed = 0;
         }
 
         private void SelectItemShape(string currentItem)
@@ -222,8 +205,7 @@ namespace ConwaysGameOfLifeWinForms
             else
             {
                 grafField.FillEllipse(Brushes.Green, rec);
-                countLivingCells++;
-                ListGameField.Where(lambda => lambda.Point == new Point(x, y)).FirstOrDefault().IsALiveCurrent = true;
+                ListGameField.Where(c => c.Point == new Point(x, y)).FirstOrDefault().IsALiveCurrent = true;
             }
         }
         private void CreateRing()
@@ -235,18 +217,27 @@ namespace ConwaysGameOfLifeWinForms
 
         private void CreateCircular()
         {
-            var r = size / 2 ;
+            var r = size / 2 + 1;
             var x0 = size / 2 ;
             var y0 = size / 2 ;
             var x = -r;
 
-            if (size % 2 == 0)
+            if (size <= 10)
             {
-                while (x >= r)
+                for (var i = 0; i < size; i++)
+                {
+                    for (var j = 0; j < size; j++)
+                    {
+                        if ((i < size / 2 - 2 && (j == 0 || j == size - 1)) || (j < size / 2 - 2 && (i == 0 || i == size - 1)) || (i > size / 2 + 1 && (j == 0 || j == size - 1)) || (j > size / 2 + 1 && (i == 0 || i == size - 1)))
+                            PaintWall(i, j);
+                    }
+                }
+            }
+            else if (size % 3 == 0)
+            {
+                while (x <= r)
                 {
                     var y = (int)Math.Floor(Math.Sqrt(r * r - x * x));
-                    var trueY = x0 + x;
-                    var a = y + y0;
 
                     for (var i = size; i >= y + y0; i--)
                     {
@@ -264,13 +255,15 @@ namespace ConwaysGameOfLifeWinForms
             }
             else
             {
+                x0--;
+                r--;
+                x++;
+                //y0--;
                 while (x <= r)
                 {
                     var y = (int)Math.Floor(Math.Sqrt(r * r - x * x));
-                    var trueY = x0 + x;
-                    var a = y + y0;
 
-                    for (var i = size; i >= y + y0; i--)
+                    for (var i = size / 2; i >= y + y0; i--)
                     {
                         PaintWall(x0 + x, i);
                     }
@@ -373,7 +366,7 @@ namespace ConwaysGameOfLifeWinForms
 
         private void PaintWall(int x, int y)
         {
-            var cell = ListGameField.Where(lambda => lambda.Point == new Point(x, y)).FirstOrDefault();
+            var cell = ListGameField.Where(c => c.Point == new Point(x, y)).FirstOrDefault();
 
             if (cell != null)
             {
@@ -468,7 +461,10 @@ namespace ConwaysGameOfLifeWinForms
                 if (liveCells < 2 || liveCells > polisy)
                     returnStatus = false;
                 else if (liveCells == 2 || liveCells == 3)
+                {
                     returnStatus = true;
+                    countLivingCellsCurrent++;
+                }
             }
             else
             {
@@ -484,7 +480,7 @@ namespace ConwaysGameOfLifeWinForms
         public bool? GetStatusCell(int x, int y, bool checkWall)
         {
             if (checkWall)
-                return ListGameField.Where(lambda => lambda.Point == new Point(x, y)).FirstOrDefault().IsWall;
+                return ListGameField.Where(c => c.Point == new Point(x, y)).FirstOrDefault().IsWall;
             else
             {
                 int? trueX;
@@ -503,7 +499,7 @@ namespace ConwaysGameOfLifeWinForms
                 if (trueX == null || trueY == null)
                     return null;
 
-                if (ListGameField.Where(lambda => lambda.Point == new Point(x, y)).FirstOrDefault().IsWall)
+                if (ListGameField.Where(c => c.Point == new Point(x, y)).FirstOrDefault().IsWall)
                 {
                     if (!active)
                         return null;
@@ -511,16 +507,16 @@ namespace ConwaysGameOfLifeWinForms
                         return true;
                 }
                 else
-                    return ListGameField.Where(lambda => lambda.Point == new Point((int)trueX, (int)trueY)).FirstOrDefault().IsALiveCurrent;
+                    return ListGameField.Where(c => c.Point == new Point((int)trueX, (int)trueY)).FirstOrDefault().IsALiveCurrent;
             }            
         }
 
         public void SetStatusCell(int x, int y, bool live)
         {
             if (live)
-                ListGameField.Where(lambda => lambda.Point == new Point(x, y)).FirstOrDefault().IsALiveNext = true;
+                ListGameField.Where(c => c.Point == new Point(x, y)).FirstOrDefault().IsALiveNext = true;
             else
-                ListGameField.Where(lambda => lambda.Point == new Point(x, y)).FirstOrDefault().IsALiveNext = false;
+                ListGameField.Where(c => c.Point == new Point(x, y)).FirstOrDefault().IsALiveNext = false;
         }
 
         private void PaintChanges()
@@ -529,7 +525,7 @@ namespace ConwaysGameOfLifeWinForms
             {
                 for (var j = 0; j < size; j++)
                 {
-                    var cell = ListGameField.Where(x => x.Point == new Point(i, j)).FirstOrDefault();
+                    var cell = ListGameField.Where(c => c.Point == new Point(i, j)).FirstOrDefault();
                     PaintCell(cell);
                     cell.IsALiveCurrent = cell.IsALiveNext;
                 }
@@ -568,7 +564,7 @@ namespace ConwaysGameOfLifeWinForms
 
             int x = e.X / blockSize;
             int y = e.Y / blockSize;
-            var cell = ListGameField.Where(lambda => lambda.Point == new Point(x, y)).FirstOrDefault();
+            var cell = ListGameField.Where(c => c.Point == new Point(x, y)).FirstOrDefault();
 
             if (cell.IsALiveCurrent)
             {
@@ -590,7 +586,14 @@ namespace ConwaysGameOfLifeWinForms
         private void GameTimer_Tick(object sender, EventArgs e)
         {
             Run();
-            GameTimer.Stop();
+
+            if (countLivingCellsCurrent == countLivingCellsNext)
+            {
+                GameTimer.Stop();
+                MessageBox.Show("End of the game. If you want to continue, click the start button");
+            }
+
+            countLivingCellsNext = countLivingCellsCurrent;
         }
     }
 
